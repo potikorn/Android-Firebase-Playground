@@ -9,8 +9,10 @@ import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_login.*
 import th.potikorn.firebaseplayground.R
+import th.potikorn.firebaseplayground.extensions.showToast
 import java.util.Arrays
 
 class LoginActivity : AppCompatActivity() {
@@ -27,34 +29,33 @@ class LoginActivity : AppCompatActivity() {
             btnReLogin.visibility = View.VISIBLE
         }
         btnReLogin.setOnClickListener { openFirebaseAuthUI() }
-    }
-
-    override fun onStart() {
-        super.onStart()
         // Choose authentication providers
         if (mAuth.currentUser == null) {
             openFirebaseAuthUI()
-        } else {
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (mAuth.currentUser != null) {
             btnLogout.visibility = View.VISIBLE
             Log.e("BEST", mAuth.currentUser?.displayName.toString())
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        super.onActivityResult(requestCode, resultCode, data)
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Logger.e(data?.data.toString())
         if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
-            Log.d("BEST", "ENTER THIS")
+            Logger.e(response.toString())
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
-                val user = FirebaseAuth.getInstance().currentUser
-                // ...
+
             } else {
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                // ...
+                response?.let {
+                    showToast("${it.error?.errorCode} : ${it.error?.message}")
+                }
+                finish()
             }
         }
     }
