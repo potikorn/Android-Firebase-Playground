@@ -1,5 +1,6 @@
 package th.potikorn.firebaseplayground.ui.chat
 
+import android.arch.lifecycle.Observer
 import android.support.v7.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -12,6 +13,7 @@ import th.potikorn.firebaseplayground.extensions.showToast
 import th.potikorn.firebaseplayground.ui.adapter.chatlist.ChatListAdapter
 import th.potikorn.firebaseplayground.ui.base.BaseActivity
 import th.potikorn.firebaseplayground.ui.dialog.CreateChatRoomDialog
+import th.potikorn.firebaseplayground.ui.viewmodel.ChatViewModel
 import java.util.Date
 
 class ChatListActivity : BaseActivity() {
@@ -20,6 +22,7 @@ class ChatListActivity : BaseActivity() {
     private val mFireStore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val chatListAdapter: ChatListAdapter by lazy { ChatListAdapter() }
     private val createChatRoomDialog: CreateChatRoomDialog by lazy { CreateChatRoomDialog.newInstance() }
+    private val chatViewModel: ChatViewModel by lazy { bindViewModel<ChatViewModel>() }
 
     override fun layoutToInflate(): Int = R.layout.activity_chat_list
 
@@ -64,32 +67,12 @@ class ChatListActivity : BaseActivity() {
     }
 
     override fun initialize() {
-        randomChatList()
-    }
-
-    private fun randomChatList() {
-        mFireStore.collection("chat-room").orderBy("created_at").get().addOnCompleteListener {
-            when (it.isSuccessful) {
-                true -> {
-                    val chatList = mutableListOf<ChatListDao>()
-                    it.result.forEach { snapShot ->
-                        chatList.add(
-                            ChatListDao(
-                                snapShot.data["chat_room_name"].toString(),
-                                snapShot.data["owner"].toString(),
-                                snapShot.data["uid"].toString()
-                            )
-                        )
-                    }
-                    chatListAdapter.setItems(chatList.reversed().toMutableList())
-                }
-                false -> {
-                    Logger.e("get failed with ${it.exception?.message}")
-                }
+        chatViewModel.liveChatListData.observe(this, Observer {
+            it?.let { data ->
+                chatListAdapter.setItems(data)
             }
-        }.addOnFailureListener {
-            Logger.e("get failed with ${it.message}")
-        }
+        })
+        chatViewModel.getMyChatList(mAuth.currentUser?.uid)
     }
 
     private fun saveNewChatRoomToDB(chatRoomName: String) {
