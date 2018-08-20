@@ -3,4 +3,7 @@
     <string name="action_logout">Logout</string>
     <string name="action_relogin">Relogin</string>
     <string name="action_signin">Sign In</string>
+    <string name="title_chat_room">Chat Room</string>
+    <string name="title_chat_room_name">Chat Room Name</string>
+    <string name="action_ok">OK</string>
 </resources>

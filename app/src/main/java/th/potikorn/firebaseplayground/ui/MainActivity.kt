@@ -6,6 +6,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import th.potikorn.firebaseplayground.R
 import th.potikorn.firebaseplayground.extensions.navigate
 import th.potikorn.firebaseplayground.ui.auth.login.LoginActivity
+import th.potikorn.firebaseplayground.ui.chat.ChatListActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,6 +15,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         btnSignIn.setOnClickListener {
             navigate<LoginActivity> { }
+        }
+        btnChatRoom.setOnClickListener {
+            navigate<ChatListActivity> { }
         }
     }
 }
