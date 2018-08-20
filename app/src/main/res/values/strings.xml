@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">20ScoopsMVVMKotlin</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_relogin">Relogin</string>
+</resources>
