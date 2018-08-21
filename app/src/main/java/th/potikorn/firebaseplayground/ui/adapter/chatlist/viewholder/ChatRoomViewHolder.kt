@@ -12,9 +12,9 @@ class ChatRoomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         callback: BaseAdapterListener?
     ) {
         itemView.apply {
-            setOnClickListener { callback?.onClick(chatList) }
+            setOnClickListener { callback?.onClick(chatList, adapterPosition) }
             setOnLongClickListener {
-                callback?.onLongClick(chatList)
+                callback?.onLongClick(chatList, adapterPosition)
                 return@setOnLongClickListener true
             }
             tvRoomName.text = chatList?.chatRoomName

@@ -31,10 +31,15 @@ class ChatListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun insertNewChatRoom(chatList: ChatListDao) {
         items?.add(0, chatList)
-        notifyDataSetChanged()
+        notifyItemInserted(0)
     }
 
     fun setSimpleListener(callback: BaseAdapterListener) {
         itemActionsListener = callback
+    }
+
+    fun deleteItem(position: Int) {
+        items?.removeAt(position)
+        notifyItemRemoved(position)
     }
 }

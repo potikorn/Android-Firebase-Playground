@@ -10,12 +10,13 @@ class ChatViewModel @Inject constructor(private val chatRepository: ChatReposito
 
     val liveChatListData = MutableLiveData<MutableList<ChatListDao>>()
     val liveErrorData = MutableLiveData<String>()
+    val liveMessageData = MutableLiveData<String>()
     val liveLoadingState = MutableLiveData<Boolean>()
     val liveRefreshState = MutableLiveData<Boolean>()
 
     fun getMyChatList(isRefresh: Boolean = false) {
         loadOrRefresh(isRefresh, true)
-        chatRepository.requestMyChatList(
+        chatRepository.requestGetChatList(
             {
                 loadOrRefresh(isRefresh, false)
                 liveChatListData.value = it
@@ -32,6 +33,15 @@ class ChatViewModel @Inject constructor(private val chatRepository: ChatReposito
                 liveLoadingState.value = false
             }, {
                 liveLoadingState.value = false
+                liveErrorData.value = it
+            })
+    }
+
+    fun deleteChatRoom(chatRoomName: String) {
+        chatRepository.requestRemoveChatRoom(chatRoomName,
+            {
+                liveMessageData.value = "Delete Successful"
+            }, {
                 liveErrorData.value = it
             })
     }
