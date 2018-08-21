@@ -10,6 +10,7 @@ import th.potikorn.firebaseplayground.di.AppComponent
 import th.potikorn.firebaseplayground.extensions.hide
 import th.potikorn.firebaseplayground.extensions.show
 import th.potikorn.firebaseplayground.extensions.showToast
+import th.potikorn.firebaseplayground.base.BaseAdapterListener
 import th.potikorn.firebaseplayground.ui.adapter.chatlist.ChatListAdapter
 import th.potikorn.firebaseplayground.ui.base.BaseActivity
 import th.potikorn.firebaseplayground.ui.dialog.CreateChatRoomDialog
@@ -40,7 +41,17 @@ class ChatListActivity : BaseActivity() {
         }
         rvChatList.apply {
             layoutManager = LinearLayoutManager(this@ChatListActivity)
-            adapter = chatListAdapter
+            adapter = chatListAdapter.apply {
+                setSimpleListener(object : BaseAdapterListener() {
+                    override fun <DATA> onClick(data: DATA) {
+                        showToast((data as ChatListDao).chatRoomName)
+                    }
+
+                    override fun <DATA> onLongClick(data: DATA) {
+                        showToast((data as ChatListDao).owner)
+                    }
+                })
+            }
         }
         fabAddNewRoom.setOnClickListener {
             when (mAuth.currentUser != null) {

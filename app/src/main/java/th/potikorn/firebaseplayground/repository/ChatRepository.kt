@@ -5,7 +5,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.orhanobut.logger.Logger
 import th.potikorn.firebaseplayground.dao.ChatListDao
-import th.potikorn.firebaseplayground.extensions.showToast
 import java.util.Date
 
 class ChatRepository {
