@@ -10,13 +10,36 @@ class ChatViewModel @Inject constructor(private val chatRepository: ChatReposito
 
     val liveChatListData = MutableLiveData<MutableList<ChatListDao>>()
     val liveErrorData = MutableLiveData<String>()
+    val liveLoadingState = MutableLiveData<Boolean>()
+    val liveRefreshState = MutableLiveData<Boolean>()
 
-    fun getMyChatList(uid: String?) {
-        chatRepository.requestMyChatList(uid ?: "" ,
+    fun getMyChatList(isRefresh: Boolean = false) {
+        loadOrRefresh(isRefresh, true)
+        chatRepository.requestMyChatList(
             {
-            liveChatListData.value = it
-        }, {
-            liveErrorData.value = it
-        })
+                loadOrRefresh(isRefresh, false)
+                liveChatListData.value = it
+            }, {
+                loadOrRefresh(isRefresh, false)
+                liveErrorData.value = it
+            })
+    }
+
+    fun createChatRoom(chatRoomName: String) {
+        liveLoadingState.value = true
+        chatRepository.requestCreateChatRoom(chatRoomName,
+            {
+                liveLoadingState.value = false
+            }, {
+                liveLoadingState.value = false
+                liveErrorData.value = it
+            })
+    }
+
+    private fun loadOrRefresh(isRefresh: Boolean, state: Boolean) {
+        when (isRefresh) {
+            true -> liveRefreshState.value = state
+            false -> liveLoadingState.value = state
+        }
     }
 }
