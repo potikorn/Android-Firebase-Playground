@@ -151,4 +151,43 @@ class ChatRepository {
                 }
             })
     }
+
+    fun requestSendMessage(
+        payLoad: Pair<String, String?>,
+        result: Pair<() -> Unit, (errorMsg: String) -> Unit>? = null
+    ) {
+        mRealTimeDb.getReference("chat-room")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(databaseError: DatabaseError) {
+                    databaseError.toException().printStackTrace()
+                    result?.second?.invoke(databaseError.message)
+                }
+
+                override fun onDataChange(dataSnapShot: DataSnapshot) {
+                    Logger.e(dataSnapShot.value.toString())
+                    dataSnapShot.children.forEach { chatRoom ->
+                        if (chatRoom.child("chat_room_name").value == payLoad.second) {
+                            val user = HashMap<String, Any>()
+                            user["uid"] = mAuth.currentUser?.uid ?: ""
+                            user["display_name"] = mAuth.currentUser?.displayName ?: ""
+                            user["email"] = mAuth.currentUser?.email ?: ""
+                            val msgMap = HashMap<String, Any>()
+                            msgMap["user"] = user
+                            msgMap["text"] = payLoad.first
+                            msgMap["post_date"] = Date().time
+                            chatRoom.child("messages")
+                                .ref
+                                .push()
+                                .setValue(msgMap)
+                                .addOnSuccessListener {
+                                    result?.first?.invoke()
+                                }
+                                .addOnFailureListener {
+                                    result?.second?.invoke(it.message.toString())
+                                }
+                        }
+                    }
+                }
+            })
+    }
 }

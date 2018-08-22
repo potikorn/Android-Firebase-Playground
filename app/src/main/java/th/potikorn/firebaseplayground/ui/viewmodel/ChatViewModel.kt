@@ -57,6 +57,10 @@ class ChatViewModel @Inject constructor(private val chatRepository: ChatReposito
             })
     }
 
+    fun sendMessage(message: String, chatRoomName: String?) {
+        chatRepository.requestSendMessage(message to chatRoomName)
+    }
+
     private fun loadOrRefresh(isRefresh: Boolean, state: Boolean) {
         when (isRefresh) {
             true -> liveRefreshState.value = state
