@@ -32,14 +32,9 @@ class ChatRepository {
                     val chatListDao = mutableListOf<ChatListDao>()
                     for (chatRoom in dataSnapShot.children) {
                         val snapShot = chatRoom.getValue(ChatListDao::class.java)
-                        if (snapShot?.members?.contains(
-                                UserFireBaseDao(
-                                    mAuth.currentUser?.displayName,
-                                    mAuth.currentUser?.email,
-                                    mAuth.currentUser?.uid
-                                )
-                            ) == true
-                        ) {
+                        snapShot?.members?.filter { user ->
+                            user.uid == mAuth.currentUser?.uid
+                        }?.forEach {
                             chatListDao.add(
                                 ChatListDao(
                                     snapShot.chatRoomName,

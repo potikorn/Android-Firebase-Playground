@@ -55,7 +55,9 @@ class ChatRoomActivity : BaseActivity() {
             }
         }
         rvChatMessages.apply {
-            layoutManager = LinearLayoutManager(this@ChatRoomActivity)
+            layoutManager = LinearLayoutManager(this@ChatRoomActivity).also {
+                it.stackFromEnd = true
+            }
             adapter = chatMessageAdapter
         }
     }
