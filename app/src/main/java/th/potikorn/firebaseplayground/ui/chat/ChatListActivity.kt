@@ -19,6 +19,7 @@ import th.potikorn.firebaseplayground.extensions.navigate
 import th.potikorn.firebaseplayground.ui.adapter.chatlist.ChatListAdapter
 import th.potikorn.firebaseplayground.ui.base.BaseActivity
 import th.potikorn.firebaseplayground.ui.chat.room.ChatRoomActivity
+import th.potikorn.firebaseplayground.ui.chat.room.ChatRoomActivity.Companion.KEY_CHAT_ROOM_NAME
 import th.potikorn.firebaseplayground.ui.dialog.CreateChatRoomDialog
 import th.potikorn.firebaseplayground.ui.viewmodel.ChatViewModel
 
@@ -50,7 +51,10 @@ class ChatListActivity : BaseActivity() {
             adapter = chatListAdapter.apply {
                 setSimpleListener(object : BaseAdapterListener() {
                     override fun <DATA> onClick(data: DATA?, position: Int) {
-                        navigate<ChatRoomActivity> { }
+                        val chatListDao = data as ChatListDao
+                        navigate<ChatRoomActivity> {
+                            putExtra(KEY_CHAT_ROOM_NAME, chatListDao.chatRoomName)
+                        }
                     }
 
                     override fun <DATA> onLongClick(data: DATA?, position: Int) {

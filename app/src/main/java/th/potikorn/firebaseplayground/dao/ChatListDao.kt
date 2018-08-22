@@ -1,6 +1,6 @@
 package th.potikorn.firebaseplayground.dao
 
-import com.google.firebase.firestore.PropertyName
+import com.google.firebase.database.PropertyName
 
 data class ChatListDao(
     @get:PropertyName("chat_room_name") @set:PropertyName("chat_room_name") var chatRoomName: String? = null,

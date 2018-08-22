@@ -1,59 +1,57 @@
 package th.potikorn.firebaseplayground.repository
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.orhanobut.logger.Logger
 import th.potikorn.firebaseplayground.dao.ChatListDao
+import th.potikorn.firebaseplayground.dao.MessagesDao
 import th.potikorn.firebaseplayground.dao.UserFireBaseDao
 import java.util.Date
 
 class ChatRepository {
 
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
-    private val mFireStore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+    private val mRealTimeDb: FirebaseDatabase by lazy { FirebaseDatabase.getInstance() }
 
     fun requestGetChatList(
         onSuccess: ((data: MutableList<ChatListDao>) -> Unit)? = null,
         onFailure: ((errorMessage: String) -> Unit)? = null
     ) {
-        mFireStore.collection("chat-room")
-            .orderBy("updated_at", Query.Direction.DESCENDING)
-            .get()
-            .addOnCompleteListener {
-                when (it.isSuccessful) {
-                    true -> {
-                        val chatList = mutableListOf<ChatListDao>()
-                        val snapShot = it.result.toObjects(ChatListDao::class.java)
-                        snapShot.filter { rawData ->
-                            rawData.members?.contains(
+        mRealTimeDb.getReference("chat-room")
+            .orderByChild("updated_at")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Logger.e("get failed with ${databaseError.message}")
+                    onFailure?.invoke(databaseError.message)
+                }
+
+                override fun onDataChange(dataSnapShot: DataSnapshot) {
+                    val chatListDao = mutableListOf<ChatListDao>()
+                    for (chatRoom in dataSnapShot.children) {
+                        val snapShot = chatRoom.getValue(ChatListDao::class.java)
+                        if (snapShot?.members?.contains(
                                 UserFireBaseDao(
                                     mAuth.currentUser?.displayName,
                                     mAuth.currentUser?.email,
                                     mAuth.currentUser?.uid
                                 )
-                            ) ?: false
-                        }.forEach { filtered ->
-                            chatList.add(
+                            ) == true
+                        ) {
+                            chatListDao.add(
                                 ChatListDao(
-                                    filtered.chatRoomName,
-                                    filtered.owner,
-                                    filtered.members
+                                    snapShot.chatRoomName,
+                                    snapShot.owner,
+                                    snapShot.members
                                 )
                             )
                         }
-                        onSuccess?.invoke(chatList)
                     }
-                    false -> {
-                        it.exception?.printStackTrace()
-                        onFailure?.invoke(it.exception?.message.toString())
-                    }
+                    onSuccess?.invoke(chatListDao.reversed().toMutableList())
                 }
-            }.addOnFailureListener {
-                Logger.e("get failed with ${it.message}")
-            }
+            })
     }
 
     fun requestCreateChatRoom(
@@ -71,8 +69,11 @@ class ChatRepository {
         chatRoom["members"] = listOf(ownerChatRoom)
         chatRoom["messages"] = listOf<String>()
         chatRoom["updated_at"] = Date()
-        mFireStore.collection("chat-room")
-            .add(chatRoom)
+        val key = mRealTimeDb.reference.push().key
+        mRealTimeDb.reference
+            .child("chat-room")
+            .child(key.toString())
+            .updateChildren(chatRoom)
             .addOnSuccessListener {
                 onSuccess?.invoke()
             }
@@ -87,20 +88,67 @@ class ChatRepository {
         onSuccess: () -> Unit,
         onFailure: (message: String) -> Unit
     ) {
-        val dbRef = mFireStore.collection("chat-room").whereEqualTo("chat_room_name", chatRoomName)
-        dbRef.get().continueWith {
-            it.result.forEach { snapShot ->
-                snapShot
-                    .reference
-                    .delete()
-                    .addOnSuccessListener { _ ->
-                        onSuccess()
+        mRealTimeDb.getReference("chat-room")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(databaseError: DatabaseError) {
+                    databaseError.toException().printStackTrace()
+                    onFailure(databaseError.message)
+                }
+
+                override fun onDataChange(dataSnapShot: DataSnapshot) {
+                    dataSnapShot.children.forEach {
+                        if (it.child("chat_room_name").value == chatRoomName) {
+                            it.ref.removeValue()
+                        }
                     }
-                    .addOnFailureListener { exception ->
-                        exception.printStackTrace()
-                        onFailure(exception.message.toString())
+                    onSuccess()
+                }
+            })
+    }
+
+    fun requestGetChatMessages(
+        chatRoomName: String,
+        onSuccess: (messages: MutableList<MessagesDao>) -> Unit,
+        onFailure: (errorMessage: String) -> Unit
+    ) {
+        mRealTimeDb.getReference("chat-room")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(databaseError: DatabaseError) {
+                    databaseError.toException().printStackTrace()
+                    onFailure(databaseError.message)
+                }
+
+                override fun onDataChange(dataSnapShot: DataSnapshot) {
+                    Logger.e(dataSnapShot.value.toString())
+                    dataSnapShot.children.forEach { chatRoom ->
+                        if (chatRoom.child("chat_room_name").value == chatRoomName) {
+                            Logger.e("${chatRoom.value}")
+                            chatRoom.child("messages").ref
+                                .addValueEventListener(object : ValueEventListener {
+                                    override fun onCancelled(databaseError: DatabaseError) {
+                                        databaseError.toException().printStackTrace()
+                                        onFailure(databaseError.message)
+                                    }
+
+                                    override fun onDataChange(messages: DataSnapshot) {
+                                        val messagesData = mutableListOf<MessagesDao>()
+                                        messages.children.forEach { msg ->
+                                            Logger.e("${msg.value}")
+                                            val messageDao = msg.getValue(MessagesDao::class.java)
+                                            messagesData.add(
+                                                MessagesDao(
+                                                    messageDao?.user,
+                                                    messageDao?.text,
+                                                    messageDao?.post_date
+                                                )
+                                            )
+                                        }
+                                        onSuccess(messagesData)
+                                    }
+                                })
+                        }
                     }
-            }
-        }
+                }
+            })
     }
 }

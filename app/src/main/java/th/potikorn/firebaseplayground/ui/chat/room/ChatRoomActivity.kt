@@ -1,5 +1,6 @@
 package th.potikorn.firebaseplayground.ui.chat.room
 
+import android.arch.lifecycle.Observer
 import android.support.v7.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import th.potikorn.firebaseplayground.R
@@ -7,11 +8,14 @@ import th.potikorn.firebaseplayground.dao.MessagesDao
 import th.potikorn.firebaseplayground.di.AppComponent
 import th.potikorn.firebaseplayground.ui.adapter.chatmsg.ChatMessagesAdapter
 import th.potikorn.firebaseplayground.ui.base.BaseActivity
+import th.potikorn.firebaseplayground.ui.viewmodel.ChatViewModel
 import java.util.Date
 
 class ChatRoomActivity : BaseActivity() {
 
+    private val chatViewModel: ChatViewModel by lazy { bindViewModel<ChatViewModel>() }
     private val chatMessageAdapter: ChatMessagesAdapter by lazy { ChatMessagesAdapter() }
+    private var chatRoomName: String? = null
 
     override fun layoutToInflate(): Int = R.layout.activity_chat_room
 
@@ -46,5 +50,23 @@ class ChatRoomActivity : BaseActivity() {
         }
     }
 
-    override fun initialize() {}
+    override fun initialize() {
+        getIntentData()
+        chatViewModel.liveChatMessages.observe(this, Observer { messages ->
+            messages?.let {
+                chatMessageAdapter.setItems(it)
+            }
+        })
+        chatViewModel.getChatMessages(chatRoomName ?: "")
+    }
+
+    private fun getIntentData() {
+        intent?.let {
+            chatRoomName = it.getStringExtra(KEY_CHAT_ROOM_NAME)
+        }
+    }
+
+    companion object {
+        const val KEY_CHAT_ROOM_NAME = "KEY_CHAT_ROOM_NAME"
+    }
 }
