@@ -31,9 +31,10 @@ class ChatRepository {
                 override fun onDataChange(dataSnapShot: DataSnapshot) {
                     val chatListDao = mutableListOf<ChatListDao>()
                     for (chatRoom in dataSnapShot.children) {
+                        Logger.e(chatRoom.value.toString())
                         val snapShot = chatRoom.getValue(ChatListDao::class.java)
-                        snapShot?.members?.filter { user ->
-                            user.uid == mAuth.currentUser?.uid
+                        snapShot?.members?.filter {
+                            it.key == mAuth.currentUser?.uid
                         }?.forEach {
                             chatListDao.add(
                                 ChatListDao(
@@ -54,16 +55,11 @@ class ChatRepository {
         onSuccess: (() -> Unit)? = null,
         onFailure: ((errorMessage: String) -> Unit)? = null
     ) {
-        val ownerChatRoom = HashMap<String, Any>()
-        ownerChatRoom["email"] = mAuth.currentUser?.email ?: ""
-        ownerChatRoom["uid"] = mAuth.currentUser?.uid ?: ""
-        ownerChatRoom["display_name"] = mAuth.currentUser?.displayName.toString()
         val chatRoom = HashMap<String, Any>()
         chatRoom["chat_room_name"] = chatRoomName
-        chatRoom["owner"] = ownerChatRoom
-        chatRoom["members"] = listOf(ownerChatRoom)
-        chatRoom["messages"] = listOf<String>()
-        chatRoom["updated_at"] = Date()
+        chatRoom["owner"] = mAuth.currentUser?.uid ?: ""
+        chatRoom["members"] = hashMapOf<String, Any>((mAuth.currentUser?.uid ?: "") to true)
+        chatRoom["updated_at"] = Date().time
         val key = mRealTimeDb.reference.push().key
         mRealTimeDb.reference
             .child("chat-room")
@@ -162,12 +158,8 @@ class ChatRepository {
                     Logger.e(dataSnapShot.value.toString())
                     dataSnapShot.children.forEach { chatRoom ->
                         if (chatRoom.child("chat_room_name").value == payLoad.second) {
-                            val user = HashMap<String, Any>()
-                            user["uid"] = mAuth.currentUser?.uid ?: ""
-                            user["display_name"] = mAuth.currentUser?.displayName ?: ""
-                            user["email"] = mAuth.currentUser?.email ?: ""
                             val msgMap = HashMap<String, Any>()
-                            msgMap["user"] = user
+                            msgMap["user"] = mAuth.currentUser?.uid ?: ""
                             msgMap["text"] = payLoad.first
                             msgMap["post_date"] = Date().time
                             chatRoom.child("messages")

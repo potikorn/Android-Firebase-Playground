@@ -68,16 +68,11 @@ class ChatListActivity : BaseActivity() {
                 true -> {
                     createChatRoomDialog.apply {
                         setOnSubmitListener { chatRoomName ->
-                            val owner = UserFireBaseDao(
-                                mAuth.currentUser?.displayName,
-                                mAuth.currentUser?.email,
-                                mAuth.currentUser?.uid
-                            )
                             chatListAdapter.insertNewChatRoom(
                                 ChatListDao(
                                     chatRoomName,
-                                    owner,
-                                    mutableListOf(owner)
+                                    mAuth.currentUser?.uid,
+                                    hashMapOf((mAuth.currentUser?.uid ?: "") to true)
                                 )
                             )
                             chatViewModel.createChatRoom(chatRoomName)

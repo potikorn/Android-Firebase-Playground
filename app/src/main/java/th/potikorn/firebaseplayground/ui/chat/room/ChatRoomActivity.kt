@@ -43,11 +43,7 @@ class ChatRoomActivity : BaseActivity() {
                         MessagesDao(
                             text = this,
                             post_date = Date().time,
-                            user = UserFireBaseDao(
-                                mAuth.currentUser?.displayName,
-                                mAuth.currentUser?.email,
-                                mAuth.currentUser?.uid
-                            )
+                            user = mAuth.currentUser?.uid
                         )
                     )
                     chatViewModel.sendMessage(this, chatRoomName)
