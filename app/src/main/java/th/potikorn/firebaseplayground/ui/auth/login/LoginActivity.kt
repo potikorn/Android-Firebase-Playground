@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -39,18 +38,15 @@ class LoginActivity : AppCompatActivity() {
         super.onResume()
         if (mAuth.currentUser != null) {
             btnLogout.visibility = View.VISIBLE
-            Log.e("BEST", mAuth.currentUser?.displayName.toString())
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Logger.e(data?.data.toString())
         if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
             Logger.e(response.toString())
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
-
             } else {
                 response?.let {
                     showToast("${it.error?.errorCode} : ${it.error?.message}")

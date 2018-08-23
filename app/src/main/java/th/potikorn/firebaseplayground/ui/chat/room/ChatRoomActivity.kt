@@ -3,18 +3,15 @@ package th.potikorn.firebaseplayground.ui.chat.room
 import android.arch.lifecycle.Observer
 import android.support.v7.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
-import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import th.potikorn.firebaseplayground.R
 import th.potikorn.firebaseplayground.dao.MessagesDao
-import th.potikorn.firebaseplayground.dao.UserFireBaseDao
 import th.potikorn.firebaseplayground.di.AppComponent
 import th.potikorn.firebaseplayground.extensions.navigate
 import th.potikorn.firebaseplayground.ui.adapter.chatmsg.ChatMessagesAdapter
 import th.potikorn.firebaseplayground.ui.base.BaseActivity
 import th.potikorn.firebaseplayground.ui.user.invite.InviteActivity
 import th.potikorn.firebaseplayground.ui.viewmodel.ChatViewModel
-import th.potikorn.firebaseplayground.ui.viewmodel.UserViewModel
 import java.util.Date
 
 class ChatRoomActivity : BaseActivity() {
@@ -40,6 +37,7 @@ class ChatRoomActivity : BaseActivity() {
     override fun setupView() {
         fabMembers.setOnClickListener {
             navigate<InviteActivity> {
+                putExtra(KEY_CHAT_ROOM_NAME, intent.getStringExtra(KEY_CHAT_ROOM_NAME))
                 putExtra(KEY_MEMBERS, intent.getSerializableExtra(KEY_MEMBERS))
             }
         }

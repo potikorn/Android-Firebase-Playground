@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.orhanobut.logger.Logger
 import th.potikorn.firebaseplayground.dao.ChatListDao
 import th.potikorn.firebaseplayground.dao.MessagesDao
 import java.util.Date
@@ -137,7 +138,7 @@ class ChatRepository {
     }
 
     fun requestSendMessage(
-        payLoad: Pair<String, String?>,
+        payload: Pair<String, String?>,
         result: Pair<() -> Unit, (errorMsg: String) -> Unit>? = null
     ) {
         mRealTimeDb.getReference("chat-room")
@@ -149,10 +150,10 @@ class ChatRepository {
 
                 override fun onDataChange(dataSnapShot: DataSnapshot) {
                     dataSnapShot.children.forEach { chatRoom ->
-                        if (chatRoom.child("chat_room_name").value == payLoad.second) {
+                        if (chatRoom.child("chat_room_name").value == payload.second) {
                             val msgMap = HashMap<String, Any>()
                             msgMap["user"] = mAuth.currentUser?.uid ?: ""
-                            msgMap["text"] = payLoad.first
+                            msgMap["text"] = payload.first
                             msgMap["post_date"] = Date().time
                             chatRoom.child("messages")
                                 .ref
@@ -163,6 +164,41 @@ class ChatRepository {
                                 }
                                 .addOnFailureListener {
                                     result?.second?.invoke(it.message.toString())
+                                }
+                        }
+                    }
+                }
+            })
+    }
+
+    fun requestAddInvite(
+        payload: Pair<MutableList<String>, String?>,
+        onSuccess: () -> Unit,
+        onFailure: (errorMsg: String) -> Unit
+    ) {
+        val members = HashMap<String, Any>()
+        payload.first.forEach {
+            members[it] = true
+        }
+        Logger.e(members.toString())
+        mRealTimeDb.getReference("chat-room")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(databaseError: DatabaseError) {
+                    databaseError.toException().printStackTrace()
+                    onFailure.invoke(databaseError.message)
+                }
+
+                override fun onDataChange(dataSnapShot: DataSnapshot) {
+                    dataSnapShot.children.forEach { chatRoom ->
+                        if (chatRoom.child("chat_room_name").value == payload.second) {
+                            chatRoom.child("members")
+                                .ref
+                                .updateChildren(members)
+                                .addOnSuccessListener {
+                                    onSuccess.invoke()
+                                }
+                                .addOnFailureListener {
+                                    onFailure.invoke(it.message.toString())
                                 }
                         }
                     }

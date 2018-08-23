@@ -15,8 +15,8 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
         userRepository.requestGetAllUsers(members,
             {
                 liveUserListData.value = it
-            }) {
-            Logger.e(it)
-        }
+            }, {
+                Logger.e(it)
+            })
     }
 }
