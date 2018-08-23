@@ -3,22 +3,27 @@ package th.potikorn.firebaseplayground.ui.chat.room
 import android.arch.lifecycle.Observer
 import android.support.v7.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import th.potikorn.firebaseplayground.R
 import th.potikorn.firebaseplayground.dao.MessagesDao
 import th.potikorn.firebaseplayground.dao.UserFireBaseDao
 import th.potikorn.firebaseplayground.di.AppComponent
+import th.potikorn.firebaseplayground.extensions.navigate
 import th.potikorn.firebaseplayground.ui.adapter.chatmsg.ChatMessagesAdapter
 import th.potikorn.firebaseplayground.ui.base.BaseActivity
+import th.potikorn.firebaseplayground.ui.user.invite.InviteActivity
 import th.potikorn.firebaseplayground.ui.viewmodel.ChatViewModel
+import th.potikorn.firebaseplayground.ui.viewmodel.UserViewModel
 import java.util.Date
 
 class ChatRoomActivity : BaseActivity() {
 
     private val chatViewModel: ChatViewModel by lazy { bindViewModel<ChatViewModel>() }
     private val chatMessageAdapter: ChatMessagesAdapter by lazy { ChatMessagesAdapter() }
-    private var chatRoomName: String? = null
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+
+    private var chatRoomName: String? = null
 
     override fun layoutToInflate(): Int = R.layout.activity_chat_room
 
@@ -33,6 +38,11 @@ class ChatRoomActivity : BaseActivity() {
     override fun setupInstance() {}
 
     override fun setupView() {
+        fabMembers.setOnClickListener {
+            navigate<InviteActivity> {
+                putExtra(KEY_MEMBERS, intent.getSerializableExtra(KEY_MEMBERS))
+            }
+        }
         ivIconSend.apply {
             setOnClickListener {
                 etSendMessage.text.toString().takeIf { txt ->
@@ -76,5 +86,6 @@ class ChatRoomActivity : BaseActivity() {
 
     companion object {
         const val KEY_CHAT_ROOM_NAME = "KEY_CHAT_ROOM_NAME"
+        const val KEY_MEMBERS = "KEY_MEMBERS"
     }
 }

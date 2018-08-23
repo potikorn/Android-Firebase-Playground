@@ -5,10 +5,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.orhanobut.logger.Logger
 import th.potikorn.firebaseplayground.dao.ChatListDao
 import th.potikorn.firebaseplayground.dao.MessagesDao
-import th.potikorn.firebaseplayground.dao.UserFireBaseDao
 import java.util.Date
 
 class ChatRepository {
@@ -24,14 +22,12 @@ class ChatRepository {
             .orderByChild("updated_at")
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(databaseError: DatabaseError) {
-                    Logger.e("get failed with ${databaseError.message}")
                     onFailure?.invoke(databaseError.message)
                 }
 
                 override fun onDataChange(dataSnapShot: DataSnapshot) {
                     val chatListDao = mutableListOf<ChatListDao>()
                     for (chatRoom in dataSnapShot.children) {
-                        Logger.e(chatRoom.value.toString())
                         val snapShot = chatRoom.getValue(ChatListDao::class.java)
                         snapShot?.members?.filter {
                             it.key == mAuth.currentUser?.uid
@@ -110,10 +106,8 @@ class ChatRepository {
                 }
 
                 override fun onDataChange(dataSnapShot: DataSnapshot) {
-                    Logger.e(dataSnapShot.value.toString())
                     dataSnapShot.children.forEach { chatRoom ->
                         if (chatRoom.child("chat_room_name").value == chatRoomName) {
-                            Logger.e("${chatRoom.value}")
                             chatRoom.child("messages").ref
                                 .addValueEventListener(object : ValueEventListener {
                                     override fun onCancelled(databaseError: DatabaseError) {
@@ -124,7 +118,6 @@ class ChatRepository {
                                     override fun onDataChange(messages: DataSnapshot) {
                                         val messagesData = mutableListOf<MessagesDao>()
                                         messages.children.forEach { msg ->
-                                            Logger.e("${msg.value}")
                                             val messageDao = msg.getValue(MessagesDao::class.java)
                                             messagesData.add(
                                                 MessagesDao(
@@ -155,7 +148,6 @@ class ChatRepository {
                 }
 
                 override fun onDataChange(dataSnapShot: DataSnapshot) {
-                    Logger.e(dataSnapShot.value.toString())
                     dataSnapShot.children.forEach { chatRoom ->
                         if (chatRoom.child("chat_room_name").value == payLoad.second) {
                             val msgMap = HashMap<String, Any>()
