@@ -32,6 +32,9 @@
         <activity
             android:name=".ui.chat.room.ChatRoomActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.user.invite.InviteActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

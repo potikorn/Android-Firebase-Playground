@@ -61,6 +61,18 @@ class ChatViewModel @Inject constructor(private val chatRepository: ChatReposito
         chatRepository.requestSendMessage(message to chatRoomName)
     }
 
+    fun inviteToChat(
+        payload: Pair<MutableList<String>, String?>,
+        onSuccess: (() -> Unit)
+    ) {
+        chatRepository.requestAddInvite(payload,
+            {
+                onSuccess()
+            }, {
+                liveErrorData.value = it
+            })
+    }
+
     private fun loadOrRefresh(isRefresh: Boolean, state: Boolean) {
         when (isRefresh) {
             true -> liveRefreshState.value = state

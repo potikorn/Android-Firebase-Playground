@@ -35,7 +35,6 @@ class ChatMessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        Logger.e(items?.get(position)?.user.toString())
         return when {
             items?.get(position)?.user == mAuth.currentUser?.uid -> {
                 MY_MESSAGE_TYPE

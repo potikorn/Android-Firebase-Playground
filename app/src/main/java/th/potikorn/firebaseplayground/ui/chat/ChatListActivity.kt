@@ -8,18 +8,18 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_chat_list.*
 import kotlinx.android.synthetic.main.dialog_confirm.*
 import th.potikorn.firebaseplayground.R
+import th.potikorn.firebaseplayground.base.BaseAdapterListener
 import th.potikorn.firebaseplayground.dao.ChatListDao
 import th.potikorn.firebaseplayground.di.AppComponent
 import th.potikorn.firebaseplayground.extensions.hide
+import th.potikorn.firebaseplayground.extensions.navigate
 import th.potikorn.firebaseplayground.extensions.show
 import th.potikorn.firebaseplayground.extensions.showToast
-import th.potikorn.firebaseplayground.base.BaseAdapterListener
-import th.potikorn.firebaseplayground.dao.UserFireBaseDao
-import th.potikorn.firebaseplayground.extensions.navigate
 import th.potikorn.firebaseplayground.ui.adapter.chatlist.ChatListAdapter
 import th.potikorn.firebaseplayground.ui.base.BaseActivity
 import th.potikorn.firebaseplayground.ui.chat.room.ChatRoomActivity
 import th.potikorn.firebaseplayground.ui.chat.room.ChatRoomActivity.Companion.KEY_CHAT_ROOM_NAME
+import th.potikorn.firebaseplayground.ui.chat.room.ChatRoomActivity.Companion.KEY_MEMBERS
 import th.potikorn.firebaseplayground.ui.dialog.CreateChatRoomDialog
 import th.potikorn.firebaseplayground.ui.viewmodel.ChatViewModel
 
@@ -54,6 +54,7 @@ class ChatListActivity : BaseActivity() {
                         val chatListDao = data as ChatListDao
                         navigate<ChatRoomActivity> {
                             putExtra(KEY_CHAT_ROOM_NAME, chatListDao.chatRoomName)
+                            putExtra(KEY_MEMBERS, chatListDao.members)
                         }
                     }
 
