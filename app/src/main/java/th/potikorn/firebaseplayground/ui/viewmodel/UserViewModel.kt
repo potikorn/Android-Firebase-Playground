@@ -10,6 +10,7 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
     val liveUserListData = MutableLiveData<MutableList<UserFireBaseDao>>()
+    val liveMessageData = MutableLiveData<String>()
 
     fun getAllUsers(members: MutableList<String>) {
         userRepository.requestGetAllUsers(members,
@@ -17,6 +18,13 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
                 liveUserListData.value = it
             }, {
                 Logger.e(it)
+            })
+    }
+
+    fun saveFCMToken() {
+        userRepository.requestSaveToken(
+            onFailure = {
+                liveMessageData.value = it
             })
     }
 }
