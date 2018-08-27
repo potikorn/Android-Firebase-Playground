@@ -9,4 +9,5 @@
     <string name="title_delete_chat_room_confirm">Are you sure you want to delete this room?</string>
     <string name="title_delete_chat_room">Delete chat room</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_invite">Invite</string>
 </resources>
