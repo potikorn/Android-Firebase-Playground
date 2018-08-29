@@ -4,13 +4,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.synthetic.main.item_my_chat_message.view.*
 import th.potikorn.firebaseplayground.dao.MessagesDao
-import java.util.Date
+import th.potikorn.firebaseplayground.extensions.getFriendlyTime
 
 class MyMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun onBindData(message: MessagesDao?) {
         itemView?.apply {
             tvMessage.text = message?.text
-            tvPostDate.text = Date(message?.post_date ?: 0).toString()
+            // FIXME need to interval time to feel real time message?
+            tvPostDate.text = message?.post_date?.getFriendlyTime()
         }
     }
 }

@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -102,4 +103,12 @@ fun AppCompatActivity.addFragment(fragment: Fragment, frameId: Int) {
 
 fun AppCompatActivity.replaceFragment(fragment: Fragment, frameId: Int) {
     supportFragmentManager.inTransaction { replace(frameId, fragment) }
+}
+
+fun Long.getFriendlyTime(): CharSequence? {
+    return DateUtils.getRelativeTimeSpanString(
+        this,
+        System.currentTimeMillis(),
+        DateUtils.SECOND_IN_MILLIS
+    )
 }
