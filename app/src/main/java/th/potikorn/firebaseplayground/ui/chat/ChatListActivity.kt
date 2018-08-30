@@ -23,7 +23,7 @@ import th.potikorn.firebaseplayground.ui.chat.room.ChatRoomActivity.Companion.KE
 import th.potikorn.firebaseplayground.ui.dialog.CreateChatRoomDialog
 import th.potikorn.firebaseplayground.ui.viewmodel.ChatViewModel
 
-class ChatListActivity : BaseActivity() {
+class ChatListActivity : BaseActivity(), BaseAdapterListener {
 
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val chatListAdapter: ChatListAdapter by lazy { ChatListAdapter() }
@@ -49,19 +49,7 @@ class ChatListActivity : BaseActivity() {
         rvChatList.apply {
             layoutManager = LinearLayoutManager(this@ChatListActivity)
             adapter = chatListAdapter.apply {
-                setSimpleListener(object : BaseAdapterListener() {
-                    override fun <DATA> onClick(data: DATA?, position: Int) {
-                        val chatListDao = data as ChatListDao
-                        navigate<ChatRoomActivity> {
-                            putExtra(KEY_CHAT_ROOM_NAME, chatListDao.chatRoomName)
-                            putExtra(KEY_MEMBERS, chatListDao.members)
-                        }
-                    }
-
-                    override fun <DATA> onLongClick(data: DATA?, position: Int) {
-                        showDeleteConfirmDialog(data as ChatListDao, position)
-                    }
-                })
+                setSimpleListener(this@ChatListActivity)
             }
         }
         fabAddNewRoom.setOnClickListener {
@@ -131,5 +119,17 @@ class ChatListActivity : BaseActivity() {
             }
         })
         chatViewModel.getMyChatList()
+    }
+
+    override fun <DATA> onClick(data: DATA?, position: Int) {
+        val chatListDao = data as ChatListDao
+        navigate<ChatRoomActivity> {
+            putExtra(KEY_CHAT_ROOM_NAME, chatListDao.chatRoomName)
+            putExtra(KEY_MEMBERS, chatListDao.members)
+        }
+    }
+
+    override fun <DATA> onLongClick(data: DATA?, position: Int) {
+        showDeleteConfirmDialog(data as ChatListDao, position)
     }
 }

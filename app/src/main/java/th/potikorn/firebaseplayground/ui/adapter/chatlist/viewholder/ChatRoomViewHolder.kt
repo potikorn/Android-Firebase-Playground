@@ -3,8 +3,9 @@ package th.potikorn.firebaseplayground.ui.adapter.chatlist.viewholder
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.synthetic.main.item_chat_list.view.*
-import th.potikorn.firebaseplayground.dao.ChatListDao
 import th.potikorn.firebaseplayground.base.BaseAdapterListener
+import th.potikorn.firebaseplayground.dao.ChatListDao
+import th.potikorn.firebaseplayground.extensions.getFriendlyTime
 
 class ChatRoomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun onBindData(
@@ -18,6 +19,7 @@ class ChatRoomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 return@setOnLongClickListener true
             }
             tvRoomName.text = chatList?.chatRoomName
+            tvUpdateTime.text = chatList?.updatedAt?.getFriendlyTime()
         }
     }
 }

@@ -43,7 +43,7 @@ class InviteActivity : BaseActivity() {
         rvUserList.apply {
             layoutManager = LinearLayoutManager(this@InviteActivity)
             adapter = userListAdapter.apply {
-                setOnActionListener(object : BaseAdapterListener() {
+                setOnActionListener(object : BaseAdapterListener {
                     override fun <DATA> onClick(data: DATA?, position: Int) {
                         val userData = data as UserFireBaseDao
                         when (members.contains(userData.uid)) {
