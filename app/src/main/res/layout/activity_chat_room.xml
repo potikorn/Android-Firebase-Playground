@@ -31,7 +31,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/holo_blue_light"
+        android:background="@color/colorPrimary"
         android:padding="8dp">
 
         <android.support.v7.widget.AppCompatEditText
@@ -40,7 +40,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:background="@android:color/white" />
+            android:maxLines="3"
+            android:scrollbars="vertical"
+            android:background="@drawable/background_chat_message_box" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/ivIconSend"
@@ -48,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            android:background="@android:color/white"
+            android:tint="@android:color/white"
             android:src="@android:drawable/ic_menu_send" />
     </LinearLayout>
 </LinearLayout>
