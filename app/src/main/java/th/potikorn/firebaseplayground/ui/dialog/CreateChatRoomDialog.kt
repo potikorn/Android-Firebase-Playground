@@ -4,7 +4,6 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.dialog_create_chat_room.*
 import th.potikorn.firebaseplayground.R
 import th.potikorn.firebaseplayground.base.BaseDialogFragment
-import th.potikorn.firebaseplayground.extensions.showToast
 
 class CreateChatRoomDialog : BaseDialogFragment() {
 

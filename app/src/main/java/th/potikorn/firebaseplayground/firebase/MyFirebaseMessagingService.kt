@@ -5,7 +5,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.orhanobut.logger.Logger
 import java.lang.Exception
 
-class MyFirebaseMessagingService: FirebaseMessagingService() {
+class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(p0: RemoteMessage?) {
         super.onMessageReceived(p0)

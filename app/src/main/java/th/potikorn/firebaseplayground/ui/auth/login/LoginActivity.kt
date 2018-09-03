@@ -9,12 +9,10 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.messaging.FirebaseMessaging
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_login.*
 import th.potikorn.firebaseplayground.R
 import th.potikorn.firebaseplayground.extensions.showToast
-import th.potikorn.firebaseplayground.firebase.MyFirebaseMessagingService
 import java.util.Arrays
 
 class LoginActivity : AppCompatActivity() {
