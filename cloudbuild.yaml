@@ -5,5 +5,5 @@ steps:
 - name: 'gcr.io/${PROJECT_ID}/android-builder'
   entrypoint: 'gradle-build'
   args: ['-g', '.gradle', 'assemble']
-- name: gcr.io/cloud-builders/gsutil
-  args: ['cp', 'cache.zip', 'gs://gradle_cache_${PROJECT_ID}/cache.zip']
+#- name: gcr.io/cloud-builders/gsutil
+#  args: ['cp', 'cache.zip', 'gs://gradle_cache_${PROJECT_ID}/cache.zip']
