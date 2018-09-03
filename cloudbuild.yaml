@@ -1,18 +1,9 @@
 steps:
-- name: gcr.io/cloud-builders/git
-  args: ['fetch', '--unshallow']
-#- name: 'gcr.io/cloud-builders/docker'
-#  args: ['build', '-t', 'gcr.io/firebase-playground/firebase-playground-image', '.']
-#  timeout: 500s
-#- name: 'gcr.io/cloud-builders/docker'
-#  args: ['push', 'gcr.io/my-project/my-image']
-#- name: 'gcr.io/cloud-builders/kubectl'
-#  args: ['set', 'image', 'deployment/my-deployment', 'my-container=gcr.io/my-project/my-image']
-#  env:
-#  - 'CLOUDSDK_COMPUTE_ZONE=us-east4-b'
-#  - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'
-#options:
-#    machineType: 'N1_HIGHCPU_8'
-#timeout: 660s
-#tags: ['mytag1', 'mytag2']
-#images: ['gcr.io/my-project/myimage']
+- name: gcr.io/cloud-builders/gsutil
+  # we use rsync and not cp so that the step does not fail the first time it is run
+  args: ['rsync', 'gs://gradle_cache_$PROJECT_ID/', '.']
+- name: 'gcr.io/$PROJECT_ID/android-builder'
+  entrypoint: 'gradle-build'
+  args: ['-g', '.gradle', 'assemble']
+- name: gcr.io/cloud-builders/gsutil
+  args: ['cp', 'cache.zip', 'gs://gradle_cache_$PROJECT_ID/cache.zip']
