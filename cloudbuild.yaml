@@ -1,9 +1,11 @@
 steps:
+# get the cache from cloud storage
 - name: gcr.io/cloud-builders/gsutil
-  # we use rsync and not cp so that the step does not fail the first time it is run
-  args: ['rsync', 'gs://gradle_cache/${PROJECT_ID}/', '.']
-- name: 'gcr.io/${PROJECT_ID}/android-builder'
+  args: ['cp', 'gs://gradle_cache_$PROJECT_ID/cache.zip', 'cache.zip']
+# build the app
+- name: 'gcr.io/$PROJECT_ID/android-builder'
   entrypoint: 'gradle-build'
-  args: ['-g', '.gradle', 'clean build']
+  args: ['-g', '.gradle', 'assemble']
+# push the cache to cloud storage
 - name: gcr.io/cloud-builders/gsutil
-  args: ['cp', 'cache.zip', 'gs://gradle_cache/${PROJECT_ID}/cache.zip']
+  args: ['cp', 'cache.zip', 'gs://gradle_cache_$PROJECT_ID/cache.zip']
