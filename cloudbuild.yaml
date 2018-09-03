@@ -7,7 +7,7 @@ steps:
   args: ['-g', '.gradle', 'clean build']
 artifacts:
   objects:
-    location: 'gs://advancedandroiddevelopment-207/store-artifact'
-    paths: ['build/outputs/apk/debug/app-debug.apk']
+    location: 'gs://cloud-build-android-bucket/firebase-playground'
+    paths: ['app/build/outputs/apk/debug/app-debug.apk']
 #- name: gcr.io/cloud-builders/gsutil
 #  args: ['cp', 'cache.zip', 'gs://gradle_cache_${PROJECT_ID}/cache.zip']
