@@ -1,0 +1,13 @@
+steps:
+#- name: gcr.io/cloud-builders/gsutil
+#  # we use rsync and not cp so that the step does not fail the first time it is run
+#  args: ['rsync', 'gs://gradle_cache_${PROJECT_ID}/', '.']
+- name: 'gcr.io/${PROJECT_ID}/android-builder'
+  entrypoint: 'gradle-build'
+  args: ['-g', '.gradle', 'clean build']
+artifacts:
+  objects:
+    location: 'gs://cloud-build-android-bucket/firebase-playground'
+    paths: ['app/build/outputs/apk/debug/app-debug.apk']
+#- name: gcr.io/cloud-builders/gsutil
+#  args: ['cp', 'cache.zip', 'gs://gradle_cache_${PROJECT_ID}/cache.zip']
