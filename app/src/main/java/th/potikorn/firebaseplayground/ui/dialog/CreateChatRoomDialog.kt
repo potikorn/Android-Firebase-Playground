@@ -39,6 +39,7 @@ class CreateChatRoomDialog : BaseDialogFragment() {
                 "Chat room name is too long."
             else -> {
                 onSubmitClickListener?.invoke(etChatRoomName.text.toString())
+                etChatRoomName.setText("")
                 dismiss()
             }
         }

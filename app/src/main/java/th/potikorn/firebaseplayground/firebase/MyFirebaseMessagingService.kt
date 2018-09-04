@@ -7,8 +7,15 @@ import java.lang.Exception
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
-    override fun onMessageReceived(p0: RemoteMessage?) {
-        super.onMessageReceived(p0)
+    override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+        super.onMessageReceived(remoteMessage)
+        Logger.i("From: " + remoteMessage?.from)
+        remoteMessage?.let { remoteMsg ->
+            Logger.i("Message data payload : ${remoteMsg.data}")
+        }
+        remoteMessage?.notification?.let { remoteMessageNotification ->
+            Logger.i("Message Notification Body : $remoteMessageNotification")
+        }
     }
 
     override fun onMessageSent(p0: String?) {

@@ -3,7 +3,6 @@ package th.potikorn.firebaseplayground.ui.adapter.chatmsg
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.google.firebase.auth.FirebaseAuth
-import com.orhanobut.logger.Logger
 import th.potikorn.firebaseplayground.R
 import th.potikorn.firebaseplayground.base.BaseAdapterListener
 import th.potikorn.firebaseplayground.dao.MessagesDao
@@ -50,7 +49,6 @@ class ChatMessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun insertNewChatMessage(message: MessagesDao) {
         items?.add(message)
-        Logger.e(items.toString())
         notifyItemInserted(items?.size?.plus(1) ?: 0)
     }
 

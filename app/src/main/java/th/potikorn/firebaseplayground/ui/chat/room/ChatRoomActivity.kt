@@ -54,6 +54,7 @@ class ChatRoomActivity : BaseActivity() {
                             user = mAuth.currentUser?.uid
                         )
                     )
+                    rvChatMessages.smoothScrollToPosition(chatMessageAdapter.itemCount.minus(1))
                     chatViewModel.sendMessage(this, chatRoomName)
                 }
             }
@@ -71,6 +72,12 @@ class ChatRoomActivity : BaseActivity() {
         chatViewModel.liveChatMessages.observe(this, Observer { messages ->
             messages?.let {
                 chatMessageAdapter.setItems(it)
+                // FIXME should use DiffUtil and scroll to bottom instead?
+                chatMessageAdapter.itemCount.takeIf { itemCount ->
+                    itemCount != 0
+                }.apply {
+                    rvChatMessages.smoothScrollToPosition(this?.minus(1) ?: 0)
+                }
             }
         })
         chatViewModel.getChatMessages(chatRoomName ?: "")
