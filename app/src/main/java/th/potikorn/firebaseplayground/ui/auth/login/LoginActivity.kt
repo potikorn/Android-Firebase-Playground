@@ -1,18 +1,19 @@
 package th.potikorn.firebaseplayground.ui.auth.login
 
 import android.app.Activity
+import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.iid.FirebaseInstanceId
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_login.*
 import th.potikorn.firebaseplayground.R
+import th.potikorn.firebaseplayground.di.AppComponent
 import th.potikorn.firebaseplayground.extensions.showToast
+import th.potikorn.firebaseplayground.ui.base.BaseActivity
+import th.potikorn.firebaseplayground.ui.viewmodel.UserViewModel
 import java.util.Arrays
 
 class LoginActivity : BaseActivity() {
