@@ -10,4 +10,5 @@
     <string name="title_delete_chat_room">Delete chat room</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_invite">Invite</string>
+    <string name="app_need_this_permission">App need to allow this permission</string>
 </resources>

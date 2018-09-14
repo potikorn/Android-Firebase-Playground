@@ -5,6 +5,7 @@ import dagger.Provides
 import retrofit2.Retrofit
 import th.potikorn.firebaseplayground.remote.GithubService
 import th.potikorn.firebaseplayground.repository.ChatRepository
+import th.potikorn.firebaseplayground.repository.UploadRepository
 import th.potikorn.firebaseplayground.repository.UserRepository
 import javax.inject.Singleton
 
@@ -23,4 +24,8 @@ class RemoteModule {
     @Provides
     @Singleton
     fun provideUserRepository() = UserRepository()
+
+    @Provides
+    @Singleton
+    fun provideUploadRepository() = UploadRepository()
 }

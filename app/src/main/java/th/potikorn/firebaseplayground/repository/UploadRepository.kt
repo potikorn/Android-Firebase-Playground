@@ -1,0 +1,31 @@
+package th.potikorn.firebaseplayground.repository
+
+import android.net.Uri
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import th.potikorn.firebaseplayground.extensions.getNowTime
+import java.io.File
+
+class UploadRepository {
+
+    private val mStorage: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
+    private val mFirebaseAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+
+    fun requestUploadImage(
+        roomRefKey: String,
+        imgFile: File
+    ) {
+        val pathRef = mStorage.reference
+            .child("firebase-playground")
+            .child(roomRefKey)
+            .child(mFirebaseAuth.currentUser?.uid ?: "")
+            .child("${getNowTime()}.jpg")
+        pathRef.putFile(Uri.fromFile(imgFile))
+            .addOnSuccessListener {
+
+            }
+            .addOnFailureListener {
+
+            }
+    }
+}
