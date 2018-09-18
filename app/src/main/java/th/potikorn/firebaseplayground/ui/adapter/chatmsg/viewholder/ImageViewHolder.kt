@@ -14,7 +14,7 @@ class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
 
-    fun onBindData(message: MessagesDao?){
+    fun onBindData(message: MessagesDao?) {
         itemView?.apply {
             when {
                 mAuth.currentUser?.uid != message?.user -> setMessageStyle(true)
