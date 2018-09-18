@@ -8,7 +8,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.item_my_chat_message.view.*
+import kotlinx.android.synthetic.main.item_chat_message.view.*
 import th.potikorn.firebaseplayground.R
 import th.potikorn.firebaseplayground.dao.MessagesDao
 import th.potikorn.firebaseplayground.extensions.getFriendlyTime

@@ -104,10 +104,10 @@ class ChatRoomActivity : BaseActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        resultCode.takeIf { it == Activity.RESULT_OK }.apply {
+        if (requestCode == Activity.RESULT_OK) {
             when (requestCode) {
                 PICK_IMAGE_REQUEST -> {
-                    getFileFromPickImage(data)
+                    data?.let { getFileFromPickImage(it) }
                 }
             }
         }
@@ -121,8 +121,6 @@ class ChatRoomActivity : BaseActivity() {
                 chatRoomName ?: "",
                 File(imageUri?.getRealPath(this@ChatRoomActivity))
             )
-//            val imageStream = contentResolver.openInputStream(imageUri)
-//            val selectedImage = BitmapFactory.decodeStream(imageStream)
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
             Toast.makeText(this@ChatRoomActivity, "Something went wrong", Toast.LENGTH_LONG).show()
@@ -142,7 +140,7 @@ class ChatRoomActivity : BaseActivity() {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     val intent = Intent().apply {
                         type = "image/*"
-                        action = Intent.ACTION_GET_CONTENT
+                        action = Intent.ACTION_PICK
                     }
                     startActivityForResult(
                         Intent.createChooser(intent, "Select Picture"),

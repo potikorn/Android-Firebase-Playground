@@ -3,6 +3,7 @@ package th.potikorn.firebaseplayground.repository
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import com.orhanobut.logger.Logger
 import th.potikorn.firebaseplayground.extensions.getNowTime
 import java.io.File
 
@@ -13,7 +14,8 @@ class UploadRepository {
 
     fun requestUploadImage(
         roomRefKey: String,
-        imgFile: File
+        imgFile: File,
+        onSuccessBlock: ((imgPath: String) -> Unit)? = null
     ) {
         val pathRef = mStorage.reference
             .child("firebase-playground")
@@ -22,10 +24,13 @@ class UploadRepository {
             .child("${getNowTime()}.jpg")
         pathRef.putFile(Uri.fromFile(imgFile))
             .addOnSuccessListener {
-
+                it.storage.downloadUrl.addOnSuccessListener { uri ->
+                    Logger.e(uri.toString())
+                    onSuccessBlock?.invoke(uri.toString())
+                }
             }
             .addOnFailureListener {
-
+                // TODO on Error
             }
     }
 }

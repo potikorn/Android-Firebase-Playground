@@ -6,6 +6,7 @@ import th.potikorn.firebaseplayground.R
 import th.potikorn.firebaseplayground.base.BaseAdapterListener
 import th.potikorn.firebaseplayground.dao.MessagesDao
 import th.potikorn.firebaseplayground.extensions.inflate
+import th.potikorn.firebaseplayground.ui.adapter.chatmsg.viewholder.ImageViewHolder
 import th.potikorn.firebaseplayground.ui.adapter.chatmsg.viewholder.MessageViewHolder
 
 class ChatMessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -17,26 +18,25 @@ class ChatMessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         when (viewType) {
-            TEXT_TYPE -> MessageViewHolder(parent.inflate(R.layout.item_my_chat_message))
-            else -> MessageViewHolder(parent.inflate(R.layout.item_my_chat_message))
+            IMAGE_TYPE -> ImageViewHolder(parent.inflate(R.layout.item_image_message))
+            else -> MessageViewHolder(parent.inflate(R.layout.item_chat_message))
         }
 
     override fun getItemCount(): Int = items?.size ?: 0
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
+            is ImageViewHolder -> holder.onBindData(items?.get(position))
             is MessageViewHolder -> holder.onBindData(items?.get(position))
         }
     }
 
-//    override fun getItemViewType(position: Int): Int {
-//        return when {
-//            items?.get(position)?.user == mAuth.currentUser?.uid -> {
-//                MY_MESSAGE_TYPE
-//            }
-//            else -> OTHER_MESSAGE_TYPE
-//        }
-//    }
+    override fun getItemViewType(position: Int): Int {
+        return when {
+            !items?.get(position)?.imgPath.isNullOrEmpty() -> IMAGE_TYPE
+            else -> TEXT_TYPE
+        }
+    }
 
     fun setItems(randomList: MutableList<MessagesDao>) {
         items = randomList
