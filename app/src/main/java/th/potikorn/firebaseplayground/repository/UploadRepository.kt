@@ -21,7 +21,7 @@ class UploadRepository {
             .child("firebase-playground")
             .child(roomRefKey)
             .child(mFirebaseAuth.currentUser?.uid ?: "")
-            .child("${getNowTime()}.jpg")
+            .child("${getNowTime()}${imgFile.extension}")
         pathRef.putFile(Uri.fromFile(imgFile))
             .addOnSuccessListener {
                 it.storage.downloadUrl.addOnSuccessListener { uri ->
@@ -30,7 +30,8 @@ class UploadRepository {
                 }
             }
             .addOnFailureListener {
-                // TODO on Error
+                it.printStackTrace()
+                Logger.e(it.message.toString())
             }
     }
 }

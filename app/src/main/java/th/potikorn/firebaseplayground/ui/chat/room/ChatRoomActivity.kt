@@ -104,7 +104,7 @@ class ChatRoomActivity : BaseActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 PICK_IMAGE_REQUEST -> {
                     data?.let { getFileFromPickImage(it) }
@@ -138,14 +138,16 @@ class ChatRoomActivity : BaseActivity() {
             .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    val intent = Intent().apply {
-                        type = "image/*"
-                        action = Intent.ACTION_PICK
+                    if (report?.areAllPermissionsGranted() == true) {
+                        val intent = Intent().apply {
+                            type = "image/*"
+                            action = Intent.ACTION_PICK
+                        }
+                        startActivityForResult(
+                            Intent.createChooser(intent, "Select Picture"),
+                            PICK_IMAGE_REQUEST
+                        )
                     }
-                    startActivityForResult(
-                        Intent.createChooser(intent, "Select Picture"),
-                        PICK_IMAGE_REQUEST
-                    )
                 }
 
                 override fun onPermissionRationaleShouldBeShown(
