@@ -69,8 +69,8 @@ object UploadImageFileManager {
             if (intent.resolveActivity(activity.packageManager) != null) {
                 startActivityForResult(
                     activity,
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                    , CAPTURE_IMAGE_REQUEST,
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri),
+                    CAPTURE_IMAGE_REQUEST,
                     null
                 )
             }
