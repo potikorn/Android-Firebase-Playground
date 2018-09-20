@@ -2,43 +2,39 @@ package th.potikorn.firebaseplayground.ui.adapter.chatmsg
 
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
-import com.google.firebase.auth.FirebaseAuth
 import th.potikorn.firebaseplayground.R
 import th.potikorn.firebaseplayground.base.BaseAdapterListener
 import th.potikorn.firebaseplayground.dao.MessagesDao
 import th.potikorn.firebaseplayground.extensions.inflate
-import th.potikorn.firebaseplayground.ui.adapter.chatmsg.viewholder.MyMessageViewHolder
-import th.potikorn.firebaseplayground.ui.adapter.chatmsg.viewholder.OtherMessageViewHolder
+import th.potikorn.firebaseplayground.ui.adapter.chatmsg.viewholder.ImageViewHolder
+import th.potikorn.firebaseplayground.ui.adapter.chatmsg.viewholder.MessageViewHolder
 
 class ChatMessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val OTHER_MESSAGE_TYPE = 0
-    val MY_MESSAGE_TYPE = 1
+    val TEXT_TYPE = 0
+    val IMAGE_TYPE = 1
     private var items: MutableList<MessagesDao>? = mutableListOf()
     private var itemActionsListener: BaseAdapterListener? = null
-    private val mAuth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         when (viewType) {
-            MY_MESSAGE_TYPE -> MyMessageViewHolder(parent.inflate(R.layout.item_my_chat_message))
-            else -> OtherMessageViewHolder(parent.inflate(R.layout.item_other_chat_message))
+            IMAGE_TYPE -> ImageViewHolder(parent.inflate(R.layout.item_image_message))
+            else -> MessageViewHolder(parent.inflate(R.layout.item_chat_message))
         }
 
     override fun getItemCount(): Int = items?.size ?: 0
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is MyMessageViewHolder -> holder.onBindData(items?.get(position))
-            is OtherMessageViewHolder -> holder.onBindData(items?.get(position))
+            is ImageViewHolder -> holder.onBindData(items?.get(position))
+            is MessageViewHolder -> holder.onBindData(items?.get(position))
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when {
-            items?.get(position)?.user == mAuth.currentUser?.uid -> {
-                MY_MESSAGE_TYPE
-            }
-            else -> OTHER_MESSAGE_TYPE
+            !items?.get(position)?.imgPath.isNullOrEmpty() -> IMAGE_TYPE
+            else -> TEXT_TYPE
         }
     }
 

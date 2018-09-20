@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import th.potikorn.firebaseplayground.ui.viewmodel.ChatViewModel
 import th.potikorn.firebaseplayground.ui.viewmodel.GithubProjectViewModel
+import th.potikorn.firebaseplayground.ui.viewmodel.UploadViewModel
 import th.potikorn.firebaseplayground.ui.viewmodel.UserViewModel
 
 @Module
@@ -25,4 +26,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UserViewModel::class)
     abstract fun bindsUserViewModel(userViewModel: UserViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UploadViewModel::class)
+    abstract fun bindsUploadViewModel(uploadViewModel: UploadViewModel): ViewModel
 }

@@ -124,6 +124,7 @@ class ChatRepository {
                                             MessagesDao(
                                                 messageDao?.user,
                                                 messageDao?.text,
+                                                messageDao?.imgPath,
                                                 messageDao?.post_date
                                             )
                                         )
@@ -199,6 +200,41 @@ class ChatRepository {
                             }
                             .addOnFailureListener {
                                 onFailure.invoke(it.message.toString())
+                            }
+                    }
+                }
+            })
+    }
+
+    fun requestImageMessage(
+        payload: Pair<String, String?>,
+        result: Pair<() -> Unit, (errorMsg: String) -> Unit>? = null
+    ) {
+        mRealTimeDb.getReference("chat-room")
+            .orderByChild("chat_room_name")
+            .equalTo(payload.second)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(databaseError: DatabaseError) {
+                    databaseError.toException().printStackTrace()
+                    result?.second?.invoke(databaseError.message)
+                }
+
+                override fun onDataChange(dataSnapShot: DataSnapshot) {
+                    dataSnapShot.children.forEach { chatRoom ->
+                        val msgMap = HashMap<String, Any>()
+                        msgMap["user"] = mAuth.currentUser?.uid ?: ""
+                        msgMap["img_path"] = payload.first
+                        msgMap["post_date"] = Date().time
+                        chatRoom.child("messages")
+                            .ref
+                            .push()
+                            .setValue(msgMap)
+                            .addOnSuccessListener {
+                                result?.first?.invoke()
+                            }
+                            .addOnFailureListener {
+                                Logger.e(it.message.toString())
+                                result?.second?.invoke(it.message.toString())
                             }
                     }
                 }

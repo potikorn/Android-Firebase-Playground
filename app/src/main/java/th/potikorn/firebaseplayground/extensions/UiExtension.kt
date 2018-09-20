@@ -1,5 +1,6 @@
 package th.potikorn.firebaseplayground.extensions
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -21,6 +22,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import java.text.SimpleDateFormat
+import java.util.Date
 
 fun Activity.hideKeyboard() {
     val imm = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -111,4 +114,10 @@ fun Long.getFriendlyTime(): CharSequence? {
         System.currentTimeMillis(),
         DateUtils.SECOND_IN_MILLIS
     )
+}
+
+@SuppressLint("SimpleDateFormat")
+fun getNowTime(): String {
+    val formatter = SimpleDateFormat("yyyyMMdd_HHmmss")
+    return formatter.format(Date())
 }
